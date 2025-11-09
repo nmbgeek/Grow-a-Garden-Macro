@@ -277,15 +277,11 @@ searchItem(keyword) {
     Sleep(1000)
     clearSearch()
     Sleep(1000)
-    cordx := 0
-    cordy := 0
     pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY "|" windowWidth "|" windowHeight)
     if (Gdip_ImageSearch(pBMScreen, bitmaps["Search"], &OutputList, , , , , 50) = 1) {
         Cords := StrSplit(OutputList, ",")
         x := Cords[1] + windowX
         y := Cords[2] + windowY
-        cordx := x
-        cordy := y
         MouseMove(x, y)
         Sleep(300)
         Click
@@ -293,9 +289,11 @@ searchItem(keyword) {
         Send(keyword)
         Sleep(500)
         Gdip_DisposeImage(pBMScreen)
+        return true
     } else {
         PlayerStatus("Could not detect Search in inventory", "0xFF0000")
         Gdip_DisposeImage(pBMScreen)
+        return false
     }
 }
 
@@ -320,7 +318,6 @@ clickItem(keyword, searchbitmap) {
             Sleep(250)
             Gdip_DisposeImage(pBMScreen)
             closeBag()
-            return true
         }
         Gdip_DisposeImage(pBMScreen)
     }
@@ -774,15 +771,13 @@ CheckStock(index, list, crafting := false) {
 buyShop(itemList, itemType, crafting := false) {
     if (itemType == "Event" || itemType == "Eggs" || itemType == "Gears") {
         posY := 0.8
+    } else if (itemType == "SeasonPass") {
+        posY := 0.82
     }
     else {
         posY := 0.835
     }
-    if (itemType == "SeasonPass") {
-        posX := 0.55
-    } else {
-        posX := 0.4
-    }
+    posX := 0.55
 
     for (item in itemlist) {
         if (A_index == 1) {
@@ -802,7 +797,7 @@ buyShop(itemList, itemType, crafting := false) {
             Sleep(250)
             Click
             Sleep(250)
-            loop 12 {
+            loop 15 {
                 Send("{WheelUp}")
                 Sleep 20
             }
@@ -1600,13 +1595,23 @@ BuySafariShop() {
     PlayerStatus("Going to SafariShop Shop!", "0x22e6a8", , false, , false)
 
     searchItem("Event Lantern")
-    clickItem("Event Lantern", "Event Lantern")
-    Sleep(500)
-    Walk(1200, Dkey)
-    Sleep(500)
-    Walk(400, Wkey)
-    Sleep(1000)
-    Send("{" Ekey "}")
+    if (clickItem("Event Lantern", "Event Lantern")) {
+        Sleep(500)
+        Walk(1200, Dkey)
+        Sleep(500)
+        Walk(400, Wkey)
+        Sleep(1000)
+        Send("{" Ekey "}")
+    } else {
+        CameraCorrection()
+        Clickbutton("Sell")
+        Walk(8400, Akey)
+        Sleep(500)
+        Walk(800, Wkey)
+        Sleep(1000)
+        Send("{" Ekey "}")
+    }
+
     if !DetectShop("SafariShop") {
         return 0
     }
