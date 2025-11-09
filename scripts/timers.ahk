@@ -2,25 +2,22 @@ nowUnix() {
     return DateDiff(A_NowUTC, "19700101000000", "Seconds")
 }
 
-
 LastShopTime := nowUnix()
 LastEggsTime := nowUnix()
 LastSafariShopTime := nowUnix()
 ; LastfallCosmeticsTime := nowUnix()
-LastDevillishDecorTime := nowUnix()
-LastCreepyCrittersTime := nowUnix()
+; LastDevillishDecorTime := nowUnix()
+; LastCreepyCrittersTime := nowUnix()
 LastMerchantTime := nowUnix()
-
 LastGearCraftingTime := nowUnix()
 LastSeedCraftingTime := nowUnix()
 LastEventCraftingtime := nowUnix()
 LastCookingTime := nowUnix()
-
 LastCosmetics := nowUnix()
 
 RewardChecker() {
-    global LastGearCraftingTime, EventCraftingtime, LastSeedCraftingTime, LastCookingTime, LastShopTime, LastEggsTime, LastCosmetics, LastMerchantTime ,LastSafariShopTime , LastCreepyCrittersTime, lastDevillishDecorTime
-    ; , LastfallCosmeticsTime
+    global LastGearCraftingTime, EventCraftingtime, LastSeedCraftingTime, LastCookingTime, LastShopTime, LastEggsTime,
+        LastCosmetics, LastMerchantTime, LastSafariShopTime ; , LastfallCosmeticsTime, LastCreepyCrittersTime, lastDevillishDecorTime
 
     static CookingTime := Integer(IniRead(settingsFile, "Settings", "CookingTime") * 1.1)
 
@@ -28,11 +25,11 @@ RewardChecker() {
 
     currentTime := nowUnix()
 
-
     if (currentTime - LastShopTime >= 300) {
         LastShopTime := currentTime
         Rewardlist.Push("Seeds")
-        Rewardlist.Push("Gears")        
+        Rewardlist.Push("Gears")
+        Rewardlist.Push("SeasonPass")
     }
     if (currentTime - LastEggsTime >= 1800) {
         LastEggsTime := currentTime
@@ -41,22 +38,18 @@ RewardChecker() {
     ; if (currentTime - LastfallCosmeticsTime >= 3600) {
     ;     LastfallCosmeticsTime := currentTime
     ;     Rewardlist.Push("fallCosmetics")
+    ; ; }
+    ; if (currentTime - LastDevillishDecorTime >= 3600) {
+    ;     LastDevillishDecorTime := currentTime
+    ;     Rewardlist.Push("DevillishDecor")
     ; }
-    if (currentTime - LastDevillishDecorTime >= 3600) {
-        LastDevillishDecorTime := currentTime
-        Rewardlist.Push("DevillishDecor")
-    }
-    if (currentTime - LastCreepyCrittersTime >= 3600) {
-        LastCreepyCrittersTime := currentTime
-        Rewardlist.Push("CreepyCritters")
-    }
+    ; if (currentTime - LastCreepyCrittersTime >= 3600) {
+    ;     LastCreepyCrittersTime := currentTime
+    ;     Rewardlist.Push("CreepyCritters")
+    ; }
     if (currentTime - LastSafariShopTime >= 900) {
         LastSafariShopTime := currentTime
         Rewardlist.Push("SafariShop")
-    }
-    if (currentTime - LastMerchantTime >= 3600) {
-        LastMerchantTime := currentTime
-        Rewardlist.Push("TravelingMerchant")
     }
     if (currentTime - LastCosmetics >= 14400) {
         LastCosmetics := currentTime
@@ -66,10 +59,18 @@ RewardChecker() {
         Rewardlist.Push("GearCrafting")
     }
     if (currentTime - LastSeedCraftingTime >= SeedCraftingTime) {
-        Rewardlist.Push("SeedCrafting")   
+        Rewardlist.Push("SeedCrafting")
     }
     if (currentTime - LastCookingTime >= CookingTime) {
         Rewardlist.Push("Cooking")
+    }
+    ; Only trigger during the first 30 minutes of the hour (0–29)
+    currentMinute := Mod(Floor((currentTime / 60)), 60)
+    if (currentMinute < 30) {
+        if (currentTime - LastMerchantTime >= 1800) {
+            LastMerchantTime := currentTime
+            Rewardlist.Push("TravelingMerchant")
+        }
     }
 
     return Rewardlist
@@ -89,21 +90,24 @@ RewardInterupt() {
         if (v = "Gears") {
             BuyGears()
         }
+        if (v = "SeasonPass") {
+            BuySeasonPass()
+        }
         if (v = "Eggs") {
             BuyEggs()
         }
-        if (v = "SafariShop"){
+        if (v = "SafariShop") {
             BuySafariShop()
         }
         ; if (v = "fallCosmetics"){
         ;     BuyfallCosmetics()
         ; }
-        if (v = "DevillishDecor"){
-            BuyDevillishDecor()
-        }
-        if (v = "CreepyCritters"){
-            BuyCreepyCritters()
-        }
+        ; if (v = "DevillishDecor") {
+        ;     BuyDevillishDecor()
+        ; }
+        ; if (v = "CreepyCritters") {
+        ;     BuyCreepyCritters()
+        ; }
         if (v = "GearCrafting") {
             GearCraft()
             Sleep(2000)
@@ -129,12 +133,10 @@ RewardInterupt() {
             LastCookingTime := nowUnix()
         }
     }
-    
+
     if (variable.Length > 0) {
         Clickbutton("Garden")
         relativeMouseMove(0.5, 0.5)
         return 1
     }
 }
-
-

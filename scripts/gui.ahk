@@ -3,13 +3,9 @@
 version := "v1.2.6"
 settingsFile := "settings.ini"
 
-
-
-
-
 if (A_IsCompiled) {
-	WebViewCtrl.CreateFileFromResource((A_PtrSize * 8) "bit\WebView2Loader.dll", WebViewCtrl.TempDir)
-    WebViewSettings := {DllPath: WebViewCtrl.TempDir "\" (A_PtrSize * 8) "bit\WebView2Loader.dll"}
+    WebViewCtrl.CreateFileFromResource((A_PtrSize * 8) "bit\WebView2Loader.dll", WebViewCtrl.TempDir)
+    WebViewSettings := { DllPath: WebViewCtrl.TempDir "\" (A_PtrSize * 8) "bit\WebView2Loader.dll" }
     guipath := A_WorkingDir
 } else {
     WebViewSettings := {}
@@ -17,8 +13,7 @@ if (A_IsCompiled) {
     guipath := ''
 }
 
-
-MyWindow := WebViewGui("-Resize -Caption ",,,WebViewSettings) ; ignore error it somehow works with it.....
+MyWindow := WebViewGui("-Resize -Caption ", , , WebViewSettings) ; ignore error it somehow works with it.....
 MyWindow.Navigate(guipath "\scripts\Gui\index.html")
 MyWindow.OnEvent("Close", (*) => StopMacro())
 ; MyWindow.Navigate("scripts/Gui/index.html")
@@ -27,13 +22,11 @@ MyWindow.AddHostObjectToScript("Save", { func: SaveSettings })
 MyWindow.AddHostObjectToScript("ReadSettings", { func: SendSettings })
 MyWindow.Show("w650 h450")
 
-
-
-F1::{
+F1:: {
     Start
 }
 
-F2::{
+F2:: {
     ResetMacro
 }
 
@@ -42,29 +35,29 @@ Alt & S:: {
 }
 
 Start(*) {
-    
+
     PlayerStatus("Starting " version " Grow A Garden Macro by epic", "0xFFFF00", , false, , false)
     OnError (e, mode) => (mode = "return") * (-1)
-    Loop {
-        MainLoop() 
+    loop {
+        MainLoop()
     }
 }
 
-ResetMacro(*) { 
+ResetMacro(*) {
     ; PlayerStatus("Stopped Grow A Garden Macro", "0xff8800", , false, , false)
     Send "{" Dkey " up}{" Wkey " up}{" Akey " up}{" Skey " up}{F14 up}"
-    Try Gdip_Shutdown(pToken)
-    Reload 
+    try Gdip_Shutdown(pToken)
+    Reload
 }
 StopMacro(*) {
     PlayerStatus("Closed Grow A Garden Macro", "0xff5e00", , false, , false)
     Send "{" Dkey " up}{" Wkey " up}{" Akey " up}{" Skey " up}{F14 up}"
-    Try Gdip_Shutdown(pToken)
+    try Gdip_Shutdown(pToken)
     ExitApp()
 }
 
 PauseToggle := true
-PauseMacro(*){
+PauseMacro(*) {
     global PauseToggle
     PauseToggle := !PauseToggle
     if PauseToggle {
@@ -79,9 +72,6 @@ PauseMacro(*){
     SetTimer () => ToolTip(), -1000
 }
 
-
-
-
 ScreenResolution() {
     if (A_ScreenDPI != 96) {
         MsgBox "
@@ -89,53 +79,52 @@ ScreenResolution() {
         Your Display Scale seems to be ≠100%. The macro will NOT work correctly!
         Set Scale to 100% in Display Settings, then restart Roblox & this macro.
         Windows key > change the resolution of display > Scale > 100%
-        )", "WARNING!!", 0x1030 " T60"
+        )",
+            "WARNING!!", 0x1030 " T60"
     }
 }
 ScreenResolution()
 
-if (WinExist("Roblox ahk_exe ApplicationFrameHost.exe")){
-        MsgBox "
+if (WinExist("Roblox ahk_exe ApplicationFrameHost.exe")) {
+    MsgBox "
         (
         Please change your roblox to website version, Your corrently are using microsoft version.
         Download roblox from the official website https://www.roblox.com/download
-        )", "WARNING!!", 0x1030 " T60"
+        )",
+        "WARNING!!", 0x1030 " T60"
 }
-
-
-
 
 WebButtonClickEvent(button) {
     switch button {
         case "Start":
             Send("{F1}")
         case "Stop":
-			Send("{F2}")
-	}
+            Send("{F2}")
+    }
 }
-
-
 
 SaveSettings(settingsJson) {
     settings := JSON.Parse(settingsJson)
     IniFile := A_WorkingDir . "\settings.ini"
 
     for key, val in settings {
-        if (key == "url" || key == "discordID" || key == "VipLink" || key == "Cosmetics" || key == "TravelingMerchant" || key == "CookingEvent" || key == "SearchList" || key == "CookingTime") {
+        if (key == "url" || key == "discordID" || key == "VipLink" || key == "Cosmetics" || key == "TravelingMerchant" ||
+            key == "CookingEvent" || key == "SearchList" || key == "CookingTime") {
             IniWrite(val, IniFile, "Settings", key)
         }
     }
 
     sectionMap := Map(
-        "seedItems", "Seeds",
-        "gearItems", "Gears",
-        "EggItems",  "Eggs",
+        "SeedItems", "Seeds",
+        "GearItems", "Gears",
+        "EggItems", "Eggs",
         "GearCraftingItems", "GearCrafting",
         "SeedCraftingItems", "SeedCrafting",
         "SafariShopItems", "SafariShop",
         ; "fallCosmeticsItems", "fallCosmetics",
-        "DevillishDecorItems", "DevillishDecor",
-        "CreepyCrittersItems", "CreepyCritters",
+        ; "DevillishDecorItems", "DevillishDecor",
+        ; "CreepyCrittersItems", "CreepyCritters",
+        "SeasonPassItems", "SeasonPass"
     )
 
     for groupName, sectionName in sectionMap {
@@ -146,37 +135,37 @@ SaveSettings(settingsJson) {
             }
         }
     }
-    MsgBox("Saved settings.",,"T0.5")
+    MsgBox("Saved settings.", , "T0.5")
 }
 
+SendSettings() {
+    settingsFile := A_WorkingDir . "\settings.ini"
+    SeedItems := getItems("Seeds")
 
-SendSettings(){
-	settingsFile := A_WorkingDir . "\settings.ini"
-    seedItems := getItems("Seeds")
-
-    gearItems := getItems("Gears")
+    GearItems := getItems("Gears")
 
     EggItems := getItems("Eggs")
 
     GearCraftingItems := getItems("GearCrafting")
-    
+
     SeedCraftingItems := getItems("SeedCrafting")
-    
+
     SafariShopItems := getItems("SafariShop")
     ; fallCosmeticsItems := getItems("fallCosmetics")
-    DevillishDecorItems := getItems("DevillishDecor")
-    CreepyCrittersItems := getItems("CreepyCritters")
+    ; DevillishDecorItems := getItems("DevillishDecor")
+    ; CreepyCrittersItems := getItems("CreepyCritters")
+    SeasonPassItems := getItems("SeasonPass")
 
-    seedItems.Push("Seeds")
-    gearItems.Push("Gears")
+    SeedItems.Push("Seeds")
+    GearItems.Push("Gears")
     EggItems.Push("Eggs")
     GearCraftingItems.Push("GearCrafting")
     SeedCraftingItems.Push("SeedCrafting")
     SafariShopItems.Push("SafariShop")
     ; fallCosmeticsItems.Push("fallCosmetics")
-    DevillishDecorItems.Push("DevillishDecor")
-    CreepyCrittersItems.Push("CreepyCritters")
-
+    ; DevillishDecorItems.Push("DevillishDecor")
+    ; CreepyCrittersItems.Push("CreepyCritters")
+    SeasonPassItems.Push("SeasonPass")
 
     if (!FileExist(settingsFile)) {
         IniWrite("", settingsFile, "Settings", "url")
@@ -187,10 +176,10 @@ SendSettings(){
         IniWrite("0", settingsFile, "Settings", "CookingEvent")
         IniWrite("", settingsFile, "Settings", "SearchList")
         IniWrite("", settingsFile, "Settings", "CookingTime")
-        for i in seedItems {
+        for i in SeedItems {
             IniWrite("1", settingsFile, "Seeds", StrReplace(i, " ", ""))
         }
-        for i in gearItems {
+        for i in GearItems {
             IniWrite("1", settingsFile, "Gears", StrReplace(i, " ", ""))
         }
         for i in EggItems {
@@ -208,11 +197,14 @@ SendSettings(){
         ; for i in fallCosmeticsItems {
         ;     IniWrite("0", settingsFile, "fallCosmetics", StrReplace(i, " ", ""))
         ; }
-        for i in DevillishDecorItems {
-            IniWrite("0", settingsFile, "DevillishDecor", StrReplace(i, " ", ""))
-        }
-        for i in CreepyCrittersItems {
-            IniWrite("0", settingsFile, "CreepyCritters", StrReplace(i, " ", ""))
+        ; for i in DevillishDecorItems {
+        ;    IniWrite("0", settingsFile, "DevillishDecor", StrReplace(i, " ", ""))
+        ; }
+        ; for i in CreepyCrittersItems {
+        ;     IniWrite("0", settingsFile, "CreepyCritters", StrReplace(i, " ", ""))
+        ; }
+        for i in SeasonPassItems {
+            IniWrite("0", settingsFile, "SeasonPass", StrReplace(i, " ", ""))
         }
         Sleep(200)
     }
@@ -228,35 +220,25 @@ SendSettings(){
         value := IniRead(settingsFile, "Settings", key, "0")
         IniWrite(value, settingsFile, "Settings", key)
     }
-    
-    SettingsJson := { 
-        url:       IniRead(settingsFile, "Settings", "url")
-      , discordID: IniRead(settingsFile, "Settings", "discordID")
-      , VipLink:   IniRead(settingsFile, "Settings", "VipLink")
-      , Cosmetics:  IniRead(settingsFile, "Settings", "Cosmetics")
-      , TravelingMerchant:  IniRead(settingsFile, "Settings", "TravelingMerchant")
-      , CookingEvent:  IniRead(settingsFile, "Settings", "CookingEvent")
-      , SearchList:  IniRead(settingsFile, "Settings", "SearchList")
-      , CookingTime:  IniRead(settingsFile, "Settings", "CookingTime")
-      , SeedItems: Map()
-      , GearItems: Map()
-      , EggItems:  Map()
-      , GearCraftingItems: Map()
-      , SeedCraftingItems: Map()
-      , SafariShopItems: Map()
-    ;   , fallCosmeticsItems: Map()
-      , DevillishDecorItems: Map()
-      , CreepyCrittersItems: Map()
+
+    SettingsJson := {
+        url: IniRead(settingsFile, "Settings", "url"), discordID: IniRead(settingsFile, "Settings", "discordID"),
+        VipLink: IniRead(settingsFile, "Settings", "VipLink"), Cosmetics: IniRead(settingsFile, "Settings", "Cosmetics"
+        ), TravelingMerchant: IniRead(settingsFile, "Settings", "TravelingMerchant"), CookingEvent: IniRead(
+            settingsFile, "Settings", "CookingEvent"), SearchList: IniRead(settingsFile, "Settings", "SearchList"),
+        CookingTime: IniRead(settingsFile, "Settings", "CookingTime"), SeedItems: Map(), GearItems: Map(), EggItems: Map(),
+        GearCraftingItems: Map(), SeedCraftingItems: Map(), SafariShopItems: Map(), SeasonPassItems: Map()
+        ;   , fallCosmeticsItems: Map(), DevillishDecorItems: Map(), CreepyCrittersItems: Map()
     }
 
-    for item in seedItems {
+    for item in SeedItems {
         key := StrReplace(item, " ", "")
         value := IniRead(settingsFile, "Seeds", key, "1")
         IniWrite(value, settingsFile, "Seeds", key)
         SettingsJson.SeedItems[item] := value
     }
 
-    for item in gearItems {
+    for item in GearItems {
         key := StrReplace(item, " ", "")
         value := IniRead(settingsFile, "Gears", key, "1")
         IniWrite(value, settingsFile, "Gears", key)
@@ -270,7 +252,6 @@ SendSettings(){
         SettingsJson.EggItems[key] := value
     }
 
-
     for item in GearCraftingItems {
         key := StrReplace(item, " ", "")
         value := IniRead(settingsFile, "GearCrafting", key, "0")
@@ -282,7 +263,7 @@ SendSettings(){
         key := StrReplace(item, " ", "")
         value := IniRead(settingsFile, "SeedCrafting", key, "0")
         IniWrite(value, settingsFile, "SeedCrafting", key)
-        SettingsJson.GearCraftingItems[key] := value
+        SettingsJson.SeedCraftingItems[key] := value
     }
 
     for item in SafariShopItems {
@@ -291,67 +272,57 @@ SendSettings(){
         IniWrite(value, settingsFile, "SafariShop", key)
         SettingsJson.SafariShopItems[key] := value
     }
+
+    for item in SeasonPassItems {
+        key := StrReplace(item, " ", "")
+        value := IniRead(settingsFile, "SeasonPass", key, "0")
+        IniWrite(value, settingsFile, "SeasonPass", key)
+        SettingsJson.SeasonPassItems[key] := value
+    }
     ; for item in fallCosmeticsItems {
     ;     key := StrReplace(item, " ", "")
     ;     value := IniRead(settingsFile, "fallCosmetics", key, "0")
     ;     IniWrite(value, settingsFile, "fallCosmetics", key)
     ;     SettingsJson.fallCosmeticsItems[key] := value
     ; }
-    for item in DevillishDecorItems {
-        key := StrReplace(item, " ", "")
-        value := IniRead(settingsFile, "DevillishDecor", key, "0")
-        IniWrite(value, settingsFile, "DevillishDecor", key)
-        SettingsJson.DevillishDecorItems[key] := value
-    }
-    for item in CreepyCrittersItems {
-        key := StrReplace(item, " ", "")
-        value := IniRead(settingsFile, "CreepyCritters", key, "0")
-        IniWrite(value, settingsFile, "CreepyCritters", key)
-        SettingsJson.CreepyCrittersItems[key] := value
-    }
+    ; for item in DevillishDecorItems {
+    ;     key := StrReplace(item, " ", "")
+    ;     value := IniRead(settingsFile, "DevillishDecor", key, "0")
+    ;     IniWrite(value, settingsFile, "DevillishDecor", key)
+    ;     SettingsJson.DevillishDecorItems[key] := value
+    ; }
+    ; for item in CreepyCrittersItems {
+    ;     key := StrReplace(item, " ", "")
+    ;     value := IniRead(settingsFile, "CreepyCritters", key, "0")
+    ;     IniWrite(value, settingsFile, "CreepyCritters", key)
+    ;     SettingsJson.CreepyCrittersItems[key] := value
+    ; }
 
-
-	MyWindow.PostWebMessageAsJson(JSON.stringify(SettingsJson))
+    MyWindow.PostWebMessageAsJson(JSON.stringify(SettingsJson))
 }
-
-
-
-
-
-
-
 
 PlayerStatus("Connected to discord!", "0x34495E", , false, , false)
 
-
-
-
-
-
 AsyncHttpRequest(method, url, func?, headers?) {
-	req := ComObject("Msxml2.XMLHTTP")
-	req.open(method, url, true)
-	if IsSet(headers)
-		for h, v in headers
-			req.setRequestHeader(h, v)
-	if IsSet(func)
-		req.onreadystatechange := func.Bind(req)
-	req.send()
+    req := ComObject("Msxml2.XMLHTTP")
+    req.open(method, url, true)
+    if IsSet(headers)
+        for h, v in headers
+            req.setRequestHeader(h, v)
+    if IsSet(func)
+        req.onreadystatechange := func.Bind(req)
+    req.send()
 }
 
+CheckUpdate(req) {
 
-CheckUpdate(req)
-{
+    if (req.readyState != 4)
+        return
 
-	if (req.readyState != 4)
-		return
+    if (req.status = 200) {
+        LatestVer := Trim((latest_release := JSON.parse(req.responseText))["tag_name"], "v")
 
-	if (req.status = 200)
-	{
-		LatestVer := Trim((latest_release := JSON.parse(req.responseText))["tag_name"], "v")
-        
-		if (VerCompare(version, LatestVer) < 0)
-		{
+        if (VerCompare(version, LatestVer) < 0) {
 
             message := "
             (
@@ -362,16 +333,16 @@ CheckUpdate(req)
 
             )"
 
-            if MsgBox(message, "Update Available", 0x40004 | 0x40 | 0x4 ) = "Yes" ; 0x4 = Yes/No, 0x40 = info icon, 0x1 = OK/Cancel default button
+            if MsgBox(message, "Update Available", 0x40004 | 0x40 | 0x4) = "Yes" ; 0x4 = Yes/No, 0x40 = info icon, 0x1 = OK/Cancel default button
             {
                 handleUpdate(LatestVer)
             }
 
         }
-	}
+    }
 }
 
-handleUpdate(ver){
+handleUpdate(ver) {
     confirmMsg := "
     (
     Do you want to update the macro now and delete the current folder?
@@ -380,10 +351,9 @@ handleUpdate(ver){
     No to just open the release page.
     )"
 
-    choice := MsgBox(confirmMsg, "Confirm Update", 0x40004 | 0x40 | 0x4) 
+    choice := MsgBox(confirmMsg, "Confirm Update", 0x40004 | 0x40 | 0x4)
 
-    if choice = "Yes"
-    {
+    if choice = "Yes" {
         url := "https://github.com/epicisgood/Grow-a-Garden-Macro/releases/download/v" ver "/Epics_GAG_macro_v" ver ".zip"
         CopySettings := 1
         olddir := A_WorkingDir
@@ -392,15 +362,10 @@ handleUpdate(ver){
         Run '"' A_WorkingDir '\scripts\update.bat" "' url '" "' olddir '" "' CopySettings '" "' DeleteOld '" "' ver '"'
         StopMacro()
     }
-    else
-    {
+    else {
         Run "https://github.com/epicisgood/Grow-a-Garden-Macro/releases/latest"
     }
 }
 
-AsyncHttpRequest("GET", "https://api.github.com/repos/epicisgood/Grow-a-Garden-Macro/releases/latest", CheckUpdate, Map("accept", "application/vnd.github+json"))
-
-
-
-
-
+AsyncHttpRequest("GET", "https://api.github.com/repos/epicisgood/Grow-a-Garden-Macro/releases/latest", CheckUpdate, Map(
+    "accept", "application/vnd.github+json"))

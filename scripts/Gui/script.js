@@ -3,13 +3,12 @@ function switchTab(tabId) {
   document.getElementById(tabId).classList.add('active');
 }
 
-
-
 let cachedData = null;
 
 async function fetchAllItems() {
   if (!cachedData) {
-    const response = await fetch('https://raw.githubusercontent.com/epicisgood/GAG-Updater/refs/heads/main/items.json');
+    const response = await fetch('https://raw.githubusercontent.com/nmbgeek/GAG-Updater/refs/heads/main/items.json');
+    // const response = await fetch('https://raw.githubusercontent.com/epicisgood/GAG-Updater/refs/heads/main/items.json');
     cachedData = await response.json();
   }
   return cachedData;
@@ -25,31 +24,31 @@ async function getItemJSON(category) {
   return data[category];
 }
 
-
-
 async function onSaveClick() {
-  const seedItems = await getItems("Seeds");
-  const gearItems = await getItems("Gears");
-  const EggItems = await getItems("Eggs");
+  const SeedItems = await getItems('Seeds');
+  const GearItems = await getItems('Gears');
+  const EggItems = await getItems('Eggs');
 
-  const GearCraftingItems = await getItems("GearCrafting");
+  const GearCraftingItems = await getItems('GearCrafting');
 
-  const SeedCraftingItems = await getItems("SeedCrafting");
+  const SeedCraftingItems = await getItems('SeedCrafting');
 
-  const SafariShopItems = await getItems("SafariShop");
+  const SafariShopItems = await getItems('SafariShop');
   // const fallCosmeticsItems = await getItems("fallCosmetics");
-  const DevillishDecorItems = await getItems("DevillishDecor");
-  const CreepyCrittersItems = await getItems("CreepyCritters");
+  // const DevillishDecorItems = await getItems('DevillishDecor');
+  // const CreepyCrittersItems = await getItems('CreepyCritters');
+  const SeasonPassItems = await getItems('SeasonPass');
 
-  seedItems.push("Seeds");
-  gearItems.push("Gears");
-  EggItems.push("Eggs");
-  GearCraftingItems.push("GearCrafting");
-  SeedCraftingItems.push("SeedCrafting");
-  SafariShopItems.push("SafariShop");
+  SeedItems.push('Seeds');
+  GearItems.push('Gears');
+  EggItems.push('Eggs');
+  GearCraftingItems.push('GearCrafting');
+  SeedCraftingItems.push('SeedCrafting');
+  SafariShopItems.push('SafariShop');
   // fallCosmeticsItems.push("fallCosmetics");
-  DevillishDecorItems.push("DevillishDecor");
-  CreepyCrittersItems.push("CreepyCritters");
+  // DevillishDecorItems.push('DevillishDecor');
+  // CreepyCrittersItems.push('CreepyCritters');
+  SeasonPassItems.push('SeasonPass');
 
   const cfg = {
     url: document.getElementById('url').value,
@@ -57,32 +56,35 @@ async function onSaveClick() {
     VipLink: document.getElementById('VipLink').value,
     TravelingMerchant: +document.getElementById('TravelingMerchant').checked,
     Cosmetics: +document.getElementById('Cosmetics').checked,
-    CookingEvent:  +document.getElementById('CookingEvent').checked,
-    SearchList:  document.getElementById('SearchList').value,
-    CookingTime:  document.getElementById('CookingTime').value,
-    seedItems: {},
+    CookingEvent: +document.getElementById('CookingEvent').checked,
+    SearchList: document.getElementById('SearchList').value,
+    CookingTime: document.getElementById('CookingTime').value,
+    SeasonPass: +document.getElementById('SeasonPass').checked,
+    SeedItems: {},
     // seed2Items: {},
-    gearItems: {},
+    GearItems: {},
     EggItems: {},
     GearCraftingItems: {},
     SeedCraftingItems: {},
     SafariShopItems: {},
     // fallCosmeticsItems: {},
-    DevillishDecorItems: {},
-    CreepyCrittersItems: {},
+    // DevillishDecorItems: {},
+    // CreepyCrittersItems: {},
+    SeasonPassItems: {},
   };
 
   const allLists = {
-    seedItems,
+    SeedItems,
     // seed2Items,
-    gearItems,
+    GearItems,
     EggItems,
     GearCraftingItems,
     SeedCraftingItems,
     SafariShopItems,
     // fallCosmeticsItems,
-    DevillishDecorItems,
-    CreepyCrittersItems,
+    // DevillishDecorItems,
+    // CreepyCrittersItems,
+    SeasonPassItems,
   };
 
   for (const [listName, items] of Object.entries(allLists)) {
@@ -93,59 +95,65 @@ async function onSaveClick() {
         cfg[listName][name] = element.checked;
       }
     });
-}
+  }
 
   ahk.Save.Func(JSON.stringify(cfg));
   console.log(cfg);
 }
-  
 
-  
 function applySettings(a) {
-    const s = a.data;
-    console.log("Applying settings with these settings: ", s);
+  const s = a.data;
+  console.log('Applying settings with these settings: ', s);
 
-    document.getElementById('url').value       = s.url;
-    document.getElementById('discordID').value = s.discordID;
-    document.getElementById('VipLink').value   = s.VipLink;
-    document.getElementById('Cosmetics').checked  = !!+s.Cosmetics
-    document.getElementById('TravelingMerchant').checked  = !!+s.TravelingMerchant
-    document.getElementById('CookingEvent').checked  = !!+s.CookingEvent
-    document.getElementById('SearchList').value  = s.SearchList
-    document.getElementById('CookingTime').value  = s.CookingTime
+  document.getElementById('url').value = s.url;
+  document.getElementById('discordID').value = s.discordID;
+  document.getElementById('VipLink').value = s.VipLink;
+  document.getElementById('Cosmetics').checked = !!+s.Cosmetics;
+  document.getElementById('TravelingMerchant').checked = !!+s.TravelingMerchant;
+  document.getElementById('CookingEvent').checked = !!+s.CookingEvent;
+  document.getElementById('SearchList').value = s.SearchList;
+  document.getElementById('CookingTime').value = s.CookingTime;
+  document.getElementById('SeasonPass').checked = !!+s.SeasonPass;
 
-    const allItems = {
-      SeedItems: s.SeedItems,
-      // Seed2Items: s.Seed2Items,
-      GearItems: s.GearItems,
-      EggItems: s.EggItems,
-      GearCraftingItems: s.GearCraftingItems,
-      SeedCraftingItems: s.SeedCraftingItems,
-      SafariShopItems: s.SafariShopItems,
-      // fallCosmeticsItems: s.fallCosmeticsItems,
-      DevillishDecorItems: s.DevillishDecorItems,
-      CreepyCrittersItems: s.CreepyCrittersItems,
-    };
+  const allItems = {
+    SeedItems: s.SeedItems || {},
+    // Seed2Items: s.Seed2Items || {},
+    GearItems: s.GearItems || {},
+    EggItems: s.EggItems || {},
+    GearCraftingItems: s.GearCraftingItems || {},
+    SeedCraftingItems: s.SeedCraftingItems || {},
+    SafariShopItems: s.SafariShopItems || {},
+    // fallCosmeticsItems: s.fallCosmeticsItems || {},
+    //DevillishDecorItems: s.DevillishDecorItems || {},
+    // CreepyCrittersItems: s.CreepyCrittersItems || {},
+    SeasonPassItems: s.SeasonPassItems || {},
+  };
 
-    for (const [listName, items] of Object.entries(allItems)) {
-      for (const item in items) {
-        const formattedItem = item.replace(/\s+/g, '');
-        const element = document.getElementById(formattedItem);
-        if (element) {
-          element.checked = !!+items[item];
-          console.log(element, items[item])
-        }
+  for (const [listName, items] of Object.entries(allItems)) {
+    for (const item in items) {
+      const formattedItem = item.replace(/\s+/g, '');
+      const element = document.getElementById(formattedItem);
+      if (element) {
+        element.checked = !!+items[item];
+        // console.log(element, items[item]);
       }
     }
-
+  }
 }
-
 
 async function AddHtml() {
   const categories = [
-    "Seeds", "Gears", "Eggs", "GearCrafting", "SeedCrafting", "SafariShop", "CreepyCritters", 'DevillishDecor'
+    'Seeds',
+    'Gears',
+    'Eggs',
+    'GearCrafting',
+    'SeedCrafting',
+    'SafariShop',
+    // 'CreepyCritters',
+    // 'DevillishDecor',
+    'SeasonPass',
     // , "fallCosmetics"
-    ];
+  ];
 
   for (const category of categories) {
     const items = await getItemJSON(category);
@@ -157,11 +165,11 @@ async function AddHtml() {
       const sanitizedName = item.name.replace(/\s+/g, '');
       const imgPath = item.image || `../../images/${category}/${item.name}.webp`;
 
-      const inputType = (category === "GearCrafting" || category === "SeedCrafting") ? "radio" : "checkbox";
-      const inputName = (inputType === "radio") ? `name="${category}"` : "";
+      const inputType = category === 'GearCrafting' || category === 'SeedCrafting' ? 'radio' : 'checkbox';
+      const inputName = inputType === 'radio' ? `name="${category}"` : '';
 
-      const div = document.createElement("div");
-      div.className = "reward-box";
+      const div = document.createElement('div');
+      div.className = 'reward-box';
       div.innerHTML = `
         <div class="reward-header">
           <img src="${imgPath}" style="width: 32.5px; height: 32.5px; margin-right: 3px; vertical-align: middle;" onerror="this.src='../../images/Other/Placeholder.webp'">
@@ -177,27 +185,30 @@ async function AddHtml() {
   }
 }
 
+document.addEventListener('DOMContentLoaded', async () => {
+  await AddHtml();
+  ahk.ReadSettings.Func();
+  window.chrome.webview.addEventListener('message', applySettings);
+});
 
-
-document.addEventListener("DOMContentLoaded", async () => {
-    await AddHtml()
-    ahk.ReadSettings.Func()
-    window.chrome.webview.addEventListener('message', applySettings);
-  })
-
-
-document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll(".SelectAll").forEach(selectAllCheckbox => {
-    selectAllCheckbox.addEventListener("change", () => {
-      const rewardGrid = selectAllCheckbox.closest(".rewards-grid");
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.SelectAll').forEach(selectAllCheckbox => {
+    selectAllCheckbox.addEventListener('change', () => {
+      const rewardGrid = selectAllCheckbox.closest('.rewards-grid');
       if (!rewardGrid) return;
 
       const checkboxes = rewardGrid.querySelectorAll("input[type='checkbox']");
 
       checkboxes.forEach(cb => {
-        const isSelectAll = cb.classList.contains("SelectAll");
+        const isSelectAll = cb.classList.contains('SelectAll');
         const isEnableCheckbox = [
-          "Seeds", "Gears", "Eggs", "SafariShop", "CreepyCritters", 'DevillishDecor'
+          'Seeds',
+          'Gears',
+          'Eggs',
+          'SafariShop',
+          // 'CreepyCritters',
+          //'DevillishDecor',
+          'SeasonPass',
           // , "fallCosmetics"
         ].includes(cb.id);
         if (!isSelectAll && !isEnableCheckbox) {
@@ -208,29 +219,10 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // Html cool stuff
 
 document.querySelectorAll('.tabs button').forEach(button => {
-  button.addEventListener('click', function() {
+  button.addEventListener('click', function () {
     document.querySelectorAll('.tabs button').forEach(btn => {
       btn.classList.remove('tab-button-active');
     });
@@ -238,10 +230,9 @@ document.querySelectorAll('.tabs button').forEach(button => {
   });
 });
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   document.querySelector('.tabs button').classList.add('tab-button-active');
 });
-
 
 document.querySelectorAll('.custom-dropdown').forEach(dropdown => {
   const selected = dropdown.querySelector('.custom-dropdown-selected');
@@ -268,7 +259,6 @@ document.querySelectorAll('.custom-dropdown').forEach(dropdown => {
   });
 });
 
-
 document.querySelectorAll('.custom-dropdown-options div[data-value]').forEach(option => {
   option.addEventListener('click', function () {
     const selected = this.closest('.custom-dropdown').querySelector('.custom-dropdown-selected');
@@ -286,7 +276,7 @@ document.querySelectorAll('.custom-dropdown-options div[data-value]').forEach(op
     const img = this.querySelector('img');
     if (img) {
       const newImg = img.cloneNode(true);
-      selected.innerHTML = ''; 
+      selected.innerHTML = '';
       selected.appendChild(newImg);
       selected.append(' ' + text);
     } else {
@@ -294,11 +284,6 @@ document.querySelectorAll('.custom-dropdown-options div[data-value]').forEach(op
     }
   });
 });
-
-
-
-
-
 
 function selectDropdownValueByData(value) {
   const option = document.querySelector(`.custom-dropdown-options div[data-value="${value}"]`);
