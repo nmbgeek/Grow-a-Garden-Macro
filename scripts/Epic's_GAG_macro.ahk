@@ -777,7 +777,7 @@ buyShop(itemList, itemType, crafting := false) {
     else {
         posY := 0.835
     }
-    posX := 0.55
+    posX := 0.45
 
     for (item in itemlist) {
         if (A_index == 1) {
@@ -807,10 +807,14 @@ buyShop(itemList, itemType, crafting := false) {
             relativeMouseMove(posX, posY)
         }
         Click
-        Sleep(350)
+        Sleep(450)
         if (A_Index >= 23 && itemType != "Seeds") {
             ScrollDown(0.25)
             Sleep(250)
+        }
+        if (A_Index >= 8 && itemType == "SafariShop" && A_Index != 15 && A_Index != 18) {
+            Send("{WheelDown}")
+            Sleep(450)
         }
         if (CheckSetting(itemType, StrReplace(item, " ", ""))) {
             CheckStock(A_Index, itemlist, crafting)
