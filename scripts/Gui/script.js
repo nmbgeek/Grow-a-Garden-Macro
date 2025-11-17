@@ -7,8 +7,8 @@ let cachedData = null;
 
 async function fetchAllItems() {
   if (!cachedData) {
-    const response = await fetch('https://raw.githubusercontent.com/nmbgeek/GAG-Updater/refs/heads/main/items.json');
-    // const response = await fetch('https://raw.githubusercontent.com/epicisgood/GAG-Updater/refs/heads/main/items.json');
+    //const response = await fetch('https://raw.githubusercontent.com/nmbgeek/GAG-Updater/refs/heads/main/items.json');
+    const response = await fetch('https://raw.githubusercontent.com/epicisgood/GAG-Updater/refs/heads/main/items.json');
     cachedData = await response.json();
   }
   return cachedData;

@@ -972,10 +972,10 @@ getItems(item) {
     if !fileContent {
         try {
             request := ComObject("WinHttp.WinHttpRequest.5.1")
-            ;request.Open("GET", "https://raw.githubusercontent.com/epicisgood/GAG-Updater/refs/heads/main/items.json",
-            ;    true)
-            request.Open("GET", "https://raw.githubusercontent.com/nmbgeek/GAG-Updater/refs/heads/main/items.json",
+            request.Open("GET", "https://raw.githubusercontent.com/epicisgood/GAG-Updater/refs/heads/main/items.json",
                 true)
+            ;request.Open("GET", "https://raw.githubusercontent.com/nmbgeek/GAG-Updater/refs/heads/main/items.json",
+            ;    true)
             request.Send()
             request.WaitForResponse()
             fileContent := JSON.parse(request.ResponseText)
