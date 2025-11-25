@@ -769,9 +769,9 @@ CheckStock(index, list, crafting := false) {
 }
 
 buyShop(itemList, itemType, crafting := false) {
-    if (itemType == "Event" || itemType == "Eggs" || itemType == "Gears") {
+    if (itemType == "Event" || itemType == "Gears") {
         posY := 0.8
-    } else if (itemType == "SeasonPass") {
+    } else if (itemType == "SeasonPass" bb) {
         posY := 0.82
     }
     else {
@@ -822,6 +822,12 @@ buyShop(itemList, itemType, crafting := false) {
             Sleep(200)
         }
     }
+    Sleep(250)
+    loop itemList.length * 3 {
+        Send("{WheelUp}")
+        Sleep 20
+    }
+    Sleep(200)
     CloseShop(crafting)
 }
 
